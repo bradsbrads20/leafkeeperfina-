@@ -4,6 +4,7 @@ import Dashboard from "../features/Dashboard";
 import IdentifyFlower from "../features/IdentifyFlower";
 import TrackWater from "../features/TrackWater";
 import { Leaf } from "lucide-react";
+import FlowerUpload from "@/components/FlowerUpload";  // ← ADDED THIS IMPORT
 
 export default function AppLayout() {
   const [activeTab, setActiveTab] = useState("dashboard");
@@ -11,7 +12,7 @@ export default function AppLayout() {
   return (
     <div className="min-h-screen" style={{ backgroundColor: "#2E6F40" }}>
       {/* Header */}
-      <header className="border-b border-green-700 bg-white/80 backdrop-blur-sm shadow-sm">
+      <header className="border-b pmborder-green-700 bg-white/80 backdrop-blur-sm shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-green-700 rounded-lg">
@@ -45,6 +46,7 @@ export default function AppLayout() {
           </TabsContent>
 
           <TabsContent value="identify" className="mt-8">
+            <FlowerUpload />  {/* ← ADDED THIS COMPONENT */}
             <IdentifyFlower />
           </TabsContent>
 

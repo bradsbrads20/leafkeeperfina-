@@ -1,15 +1,18 @@
-import { defineConfig, Plugin } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
-import { createServer } from "./server";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(async ({ mode }) => ({
   server: {
-    host: "::",
-    port: 8080,
+    host: true, // better than "::" for compatibility
+    port: 3000,
     fs: {
-      allow: ["./client", "./shared", "index.html"],
+      allow: [
+        path.resolve(__dirname, "client"),
+        path.resolve(__dirname, "shared"),
+        path.resolve(__dirname, "index.html"),
+      ],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
     },
   },
@@ -19,21 +22,28 @@ export default defineConfig(({ mode }) => ({
   plugins: [react(), expressPlugin()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./client"),
-      "@shared": path.resolve(__dirname, "./shared"),
+      "@": path.resolve(__dirname, "client"),
+      "@shared": path.resolve(__dirname, "shared"),
     },
   },
 }));
 
-function expressPlugin(): Plugin {
+function expressPlugin() {
   return {
     name: "express-plugin",
-    apply: "serve", // Only apply during development (serve mode)
-    configureServer(server) {
-      const app = createServer();
+    apply: "serve", // dev only
+    async configureServer(server) {
+      try {
+        const { createServer } = await import("./server/index.js"); 
+        // 👆 explicitly point to file to avoid resolution issues
 
-      // Add Express app as middleware to Vite dev server
-      server.middlewares.use(app);
+        const app = createServer();
+
+        // attach BEFORE Vite fallback
+        server.middlewares.use(app);
+      } catch (err) {
+        console.warn("Server module not available:", err.message);
+      }
     },
   };
 }
