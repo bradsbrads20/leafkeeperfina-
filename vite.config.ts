@@ -18,6 +18,8 @@ export default defineConfig(async ({ mode }) => ({
   },
   build: {
     outDir: "dist/spa",
+    // Add this to prevent favicon from being generated
+    assetsInlineLimit: 0,
   },
   plugins: [react(), expressPlugin()],
   resolve: {
@@ -26,6 +28,8 @@ export default defineConfig(async ({ mode }) => ({
       "@shared": path.resolve(__dirname, "shared"),
     },
   },
+  // Add this to customize the default favicon
+
 }));
 
 function expressPlugin() {
@@ -35,11 +39,7 @@ function expressPlugin() {
     async configureServer(server) {
       try {
         const { createServer } = await import("./server/index.js"); 
-        // 👆 explicitly point to file to avoid resolution issues
-
         const app = createServer();
-
-        // attach BEFORE Vite fallback
         server.middlewares.use(app);
       } catch (err) {
         console.warn("Server module not available:", err.message);
