@@ -31,6 +31,13 @@ export default function Dashboard() {
           axios.get("/api/water-records"),
         ]);
 
+        if (
+          !Array.isArray(plantsRes.data?.plants) ||
+          !Array.isArray(recordsRes.data?.records)
+        ) {
+          throw new Error("Unexpected API response shape");
+        }
+
         setPlants(plantsRes.data.plants);
         setWaterRecords(recordsRes.data.records);
       } catch (err) {

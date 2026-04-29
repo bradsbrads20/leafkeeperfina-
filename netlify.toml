@@ -7,15 +7,13 @@ publish = "dist/spa"
 external_node_modules = ["express"]
 node_bundler = "esbuild"
 
-# ADD THIS NEW REDIRECT RULE FOR CLIENT-SIDE ROUTING
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
-
-# Keep your existing API redirect
 [[redirects]]
 force = true
 from = "/api/*"
 status = 200
 to = "/.netlify/functions/api/:splat"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
